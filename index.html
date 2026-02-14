@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Valentine ❤️</title>
+
+<style>
+body{
+  margin:0;
+  font-family:"Comic Sans MS", cursive;
+  background:
+    radial-gradient(circle at top left, #ffd1dc, transparent 60%),
+    radial-gradient(circle at bottom right, #ffb3c6, transparent 60%),
+    linear-gradient(135deg, #fff0f5, #ffe4ec);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  padding:20px;
+}
+
+.container{
+  background:#fffdf8;
+  padding:30px;
+  border-radius:28px;
+  text-align:center;
+  width:100%;
+  max-width:520px;
+  box-shadow:0 15px 30px rgba(255,105,180,.25);
+}
+
+/* BLUR ONLY VALENTINE CONTENT */
+.locked .content{
+  filter: blur(6px);
+  pointer-events:none;
+}
+
+img{width:240px;margin-bottom:18px;}
+
+.message{
+  max-width:420px;
+  margin:0 auto 20px;
+  color:#b45309;
+  font-size:18px;
+  line-height:1.55;
+}
+
+button{
+  padding:10px 26px;
+  font-size:16px;
+  border-radius:25px;
+  border:none;
+  cursor:pointer;
+  background:#f472b6;
+  color:white;
+}
+
+/* PAYMENT */
+#paymentBox{
+  margin-top:20px;
+  background:#fff0f5;
+  padding:18px;
+  border-radius:20px;
+  display:none;
+}
+
+/* ADMIN */
+#adminBox{
+  margin-top:15px;
+  display:none;
+}
+
+/* MUSIC */
+#musicModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+
+.modalBox{
+  background:white;
+  padding:25px;
+  border-radius:22px;
+  text-align:center;
+  width:80%;
+  max-width:300px;
+}
+
+#muteBtn{
+  position:fixed;
+  top:15px;
+  right:15px;
+  background:rgba(0,0,0,.6);
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:20px;
+  cursor:pointer;
+  display:none;
+  z-index:9999;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgMusic" src="lala.mp3" loop></audio>
+
+<div id="musicModal">
+  <div class="modalBox">
+    <h3>Play music for more vibe? 🎵</h3>
+    <button onclick="playMusic()">Yes 💖</button>
+    <button onclick="skipMusic()">No 🙂</button>
+  </div>
+</div>
+
+<button id="muteBtn" onclick="toggleMute()">🔊</button>
+
+<div class="container" id="card">
+
+<!-- BLURRED CONTENT -->
+<div class="content">
+
+  <!-- PAGE 1 -->
+  <div id="page1">
+    <img src="teddy.gif">
+    <div class="message">
+      <p><strong>Hieeeeeee <span id="loverName"></span> ❤️!</strong></p>
+      <p>Will you be my Valentine? 😤🤌</p>
+    </div>
+    <button onclick="goPage2()">Yes 💖</button>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div id="page2" style="display:none;">
+    <img src="omg.gif">
+    <div class="message">
+      <p><strong>Happy Valentine’s Day 💕</strong></p>
+      <p id="msg1"></p>
+    </div>
+    <button onclick="goPage3()">Next 😍</button>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div id="page3" style="display:none;">
+    <img src="dance-baby.gif">
+    <div class="message">
+      <p id="msg2"></p>
+      <p id="msg3"></p>
+    </div>
+  </div>
+
+</div>
+
+<!-- PAYMENT -->
+<div id="paymentBox">
+  <p><strong>🔒 Unlock Full Surprise</strong></p>
+  <p>Pay <strong>₹29</strong> via UPI</p>
+  <p><strong>9538518278@kotak811</strong></p>
+
+  <a id="waBtn" target="_blank">
+    <button>Send Payment Proof 💬</button>
+  </a>
+</div>
+
+<!-- ADMIN ONLY -->
+<div id="adminBox">
+  <button onclick="copyUnlocked()">Copy Unlocked Link 🔓</button>
+</div>
+
+</div>
+
+<script>
+/* URL PARAMS */
+const params = new URLSearchParams(window.location.search);
+const name   = params.get("name") || "You";
+const msg1   = params.get("m1") || "";
+const msg2   = params.get("m2") || "";
+const msg3   = params.get("m3") || "";
+const unlock = params.get("unlock") === "true";
+const isAdmin = params.get("admin") === "1";
+
+/* TEXT */
+loverName.innerText = name;
+msg1 && (document.getElementById("msg1").innerText = msg1);
+msg2 && (document.getElementById("msg2").innerText = msg2);
+msg3 && (document.getElementById("msg3").innerText = msg3);
+
+/* LOCK */
+if(!unlock){
+  card.classList.add("locked");
+  paymentBox.style.display="block";
+
+  waBtn.href =
+    "https://wa.me/919538518278?text=" +
+    encodeURIComponent(
+      "Hi, I have completed the payment for the Valentine page ❤️\n\nName: " + name
+    );
+
+  if(isAdmin){
+    adminBox.style.display="block";
+  }
+}
+
+/* MUSIC ONLY AFTER UNLOCK */
+const music = document.getElementById("bgMusic");
+const musicModal = document.getElementById("musicModal");
+const muteBtn = document.getElementById("muteBtn");
+
+if(unlock){
+  setTimeout(()=> musicModal.style.display="flex", 800);
+}
+
+function playMusic(){
+  music.play();
+  musicModal.style.display="none";
+  muteBtn.style.display="block";
+}
+function skipMusic(){
+  music.muted=true;
+  musicModal.style.display="none";
+  muteBtn.style.display="block";
+}
+function toggleMute(){
+  music.muted=!music.muted;
+  muteBtn.textContent = music.muted ? "🔇" : "🔊";
+}
+
+/* ADMIN COPY */
+function copyUnlocked(){
+  const url =
+    location.origin + location.pathname +
+    `?name=${encodeURIComponent(name)}` +
+    `&m1=${encodeURIComponent(msg1)}` +
+    `&m2=${encodeURIComponent(msg2)}` +
+    `&m3=${encodeURIComponent(msg3)}` +
+    `&unlock=true`;
+
+  navigator.clipboard.writeText(url);
+  alert("Unlocked link copied! Send it to the customer 💖");
+}
+
+/* NAV */
+function goPage2(){
+  if(!unlock) return;
+  page1.style.display="none";
+  page2.style.display="block";
+}
+function goPage3(){
+  if(!unlock) return;
+  page2.style.display="none";
+  page3.style.display="block";
+}
+</script>
+
+</body>
+</html>
